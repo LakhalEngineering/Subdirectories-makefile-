@@ -1,29 +1,36 @@
 
 
-*/	mkdir src
-	mv *.c src/.
-	mkdir obj
-	mkdir bin
+*/	make release
 	make clean
 	make
 	*/
 
 CC=clang
 CFLAGS=-g -Wall
-OBJS=obj/allocator.o obj/memtest.O
-BIN = bin/main
+SRC=src
+OBJ=obj
+SRCS=$(wildcard $(SRC)/*.c)
+OBJS=$(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
+
+BINDIR=bin
+BIN = $(BINDIR)/main
 SUBMITNAME=project5.zip
 
 all:$(BIN)
 
-bin/main: $(OBJS)
+
+release: CFLAGS=-Wall -O2 -DNDEBUG
+release: clean
+release: $(BIN)
+
+$(BIN): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 
-obj/%.o: src/%.c
+$(OBJ)/%.o: $(SRC)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) -r bin/* obj/*
+	$(RM) -r bin/* $(OBJ)/*
 
 submit:
 	$(RM) $(SUBMITNAME)
